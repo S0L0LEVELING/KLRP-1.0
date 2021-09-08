@@ -3,18 +3,17 @@ local states = {}
 states.frozen = false
 states.frozenPos = nil
 
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(0)
-		
-		if (IsControlJustPressed(1, 212) and IsControlJustPressed(1, 213)) then
-			if group ~= "user" then
-				SetNuiFocus(true, true)
-				SendNUIMessage({type = 'open', players = getPlayers()})
-			end
-		end
+RegisterKeyMapping("+es_admin2", "Admin Meni", "keyboard", 'HOME')
+
+RegisterCommand("+es_admin2",function()
+	if group ~= "user" and group ~= "mod" then
+	   SetNuiFocus(true, true)
+	   SendNUIMessage({type = 'open', players = getPlayers()})
 	end
-end)
+end,false)
+
+RegisterCommand("-es_admin2",function()
+end,false)
 
 RegisterNetEvent('es_admin:setGroup')
 AddEventHandler('es_admin:setGroup', function(g)
@@ -236,11 +235,9 @@ AddEventHandler("es_admin:noclip", function(t)
 end)
 
 function getPlayers()
-	local players = {}
-	for i = 0,32 do
-		if NetworkIsPlayerActive(i) then
-			table.insert(players, {id = GetPlayerServerId(i), name = GetPlayerName(i)})
-		end
-	end
-	return players
+    local players = {}
+    for _, player in ipairs(GetActivePlayers()) do
+        table.insert(players, {id = GetPlayerServerId(player), name = GetPlayerName(player)})
+    end
+    return players
 end
